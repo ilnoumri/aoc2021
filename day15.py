@@ -1,5 +1,6 @@
 from lib import open_file
 from collections import defaultdict
+from queue import PriorityQueue
 
 lines = open_file("input/day15.txt")
 graph = []
@@ -24,18 +25,18 @@ def get_adj(graph, loc):
     return res
 
 def dijkstra(graph, org):
-    q = []
-    q.append(org)
+    q = PriorityQueue()
     dist = defaultdict(int)
     dist[org] = 0
-    while q:
-        current = q.pop(0)
+    q.put((dist[org], org))
+    while not q.empty():
+        _, current = q.get()
         for adj in get_adj(graph, current):
             x, y = adj
             new_dist = dist[current] + graph[x][y]
             if adj not in dist or dist[adj] > new_dist:
                 dist[adj] = new_dist
-                q.append(adj)
+                q.put((dist[adj], adj))
     return dist
 
 def expand(graph):
